@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import WeatherApp
 
 final class WeatherAppUITests: XCTestCase {
 
@@ -28,6 +29,10 @@ final class WeatherAppUITests: XCTestCase {
         app.launch()
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+    }
+    
+    func testGetForecastForWeek() throws {
+        let transformer = EndpointToURLRequestTransformer
     }
 
     func testLaunchPerformance() throws {
