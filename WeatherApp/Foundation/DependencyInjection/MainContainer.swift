@@ -41,6 +41,7 @@ final class MainContainer: AppContainer {
                               httpErrorHandler: AppHTTPErrorHandler())
         }.inObjectScope(.container)
         
+        
         container.register(AnyRepository<Weather>.self) { (resolver) -> AnyRepository in
             AnyRepository(base: ForecastRepository(httpClient: resolver.resolve(HTTPClientType.self)!))
         }
@@ -48,9 +49,12 @@ final class MainContainer: AppContainer {
         container.register(HomeViewModel.self) { (resovler) -> HomeViewModel in
             HomeViewModel(viewState: .loading, repository: resovler.resolve(AnyRepository<Weather>.self)!)
         }.inObjectScope(.container)
+        container.register(HomeView.self) { (resolver) -> HomeView in
+            UIView.fromNib()
+        }
         
         container.register(HomeViewController.self) { (resolver) -> HomeViewController in
-            HomeViewController(view: HomeView(), homeViewModel: resolver.resolve(HomeViewModel.self)!)
+            HomeViewController(view: resolver.resolve(HomeView.self)!, homeViewModel: resolver.resolve(HomeViewModel.self)!)
         }.inObjectScope(.container)
     }
 }

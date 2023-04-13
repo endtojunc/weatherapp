@@ -17,7 +17,7 @@ final class ForecastRepository: Repository {
     
     func get(with parameter: RepositoryParameter) -> Observable<Result<Weather>> {
         guard let parameter = parameter as? ForecastRepositoryParameter else {
-            return Observable.error(ParameterTypeError(developerMessage: "parameter should be typed GetVideoSourcesParameter"))
+            return Observable.error(ParameterTypeError(developerMessage: "parameter should be typed ForecastRepositoryParameter"))
         }
         
         return httpClient.request(endpoint: ForecastEndpoint.dailyForecast(parameter: parameter))

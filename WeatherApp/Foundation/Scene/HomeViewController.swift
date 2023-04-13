@@ -15,6 +15,8 @@ final class HomeViewController: UIViewController {
     private let homeView: HomeView
     private let homeViewModel: HomeViewModel
     
+    var callOnce = false
+    
     var locationManager: CLLocationManager
     var lat: CLLocationDegrees = 0.0
     var lng: CLLocationDegrees = 0.0
@@ -33,31 +35,19 @@ final class HomeViewController: UIViewController {
     
     override func loadView() {
         super.loadView()
-        view = homeView.view
+        view = homeView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         locationManager.desiredAccuracy = 100
         locationManager.requestWhenInUseAuthorization()
         locationManager.distanceFilter = CLLocationDistanceMax
         locationManager.delegate = self
     }
-}
-
-extension HomeViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse {
-            locationManager.startUpdatingLocation()
-        }
-    }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let coordinates = locations.last
-        lat = coordinates?.coordinate.latitude ?? 0.0
-        lng = coordinates?.coordinate.longitude ?? 0.0
-        
+    private func requestCurrentWeatherAndForecast() {
         let output = homeViewModel
             .handle(request: EventRequest(action: .viewDidLoad, parameters: [
                 EventRequestParameterKey.Forecast.apiKey: Bundle.main.apiBaseURL,
@@ -74,5 +64,21 @@ extension HomeViewController: CLLocationManagerDelegate {
             }
         
         homeView.update(with: provider)
+    }
+}
+
+extension HomeViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let coordinates = locations.last
+        lat = coordinates?.coordinate.latitude ?? 0.0
+        lng = coordinates?.coordinate.longitude ?? 0.0
+        
+        requestCurrentWeatherAndForecast()
     }
 }
